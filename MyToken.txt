@@ -1,0 +1,43 @@
+pragma solidity ^0.4.18;
+
+contract MyToken {
+     This creates an array with all balances
+    mapping (address = uint256) public balanceof;
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    ------------------------------------------------------------------
+    
+     this generates a pubic event on the blockchain that will notify clients
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    ------------------------------------------------------------------
+    
+     Constructor
+    function MyToken(uint256 initialSupply, string tokenName, 
+                      string tokenSymbol, uint8 decimalUnits) public {
+         given the creator all initial tokens
+        balanceof[msg.sender] = initialSupply;
+         set the name for display purposes
+        name = tokenName;
+         set the symbol for display purposes
+        symbol = tokenSymbol;
+         Amout of decimals for display purposes
+        decimals = decimalUnits;
+    }
+    
+    
+     send coins
+    function transfer(address _to, uint256 _value) public{
+         check if sender has balance and for overflow
+        require(balanceof[msg.sender]=_value && balanceof[_to]+_value=balanceof[_to]);
+        
+         add and subtract new balances
+        balanceof[msg.sender] -= _value;
+        balanceof[_to] += _value;
+        
+         Notify anyone listening that this transfer took place 
+        Transfer(msg.sender, _to, _value);
+    }
+    
+    
+}
