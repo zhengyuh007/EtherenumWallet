@@ -1,43 +1,171 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.16;
 
-contract MyToken {
-    // This creates an array with all balances
-    mapping (address = uint256) public balanceof;
+contract owned{
+    address public owner;
+    
+    function owned() public{
+        owner = msg.sender;
+    }
+    
+    modifier onlyOwner{
+        require(msg.sender==owner);
+        _;
+    }
+    
+    function transferOwnership(address newOwner) public onlyOwner{
+        owner = newOwner;
+    }
+}
+//------------------------------------------------------------------------
+
+contract MyToken is owned{
+    // This creates an array with all balances
+    mapping (address => uint256) public balanceof;
     string public name;
     string public symbol;
     uint8 public decimals;
-    ------------------------------------------------------------------
+    uint256 public totalSupply;
+    mapping (address => bool) public frozenAccount;
     
-    // this generates a pubic event on the blockchain that will notify clients
+    uint256 public sellPrice;
+    uint256 public buyPrice;
+    uint public minBalanceForAccounts;
+    uint public currentChallenge = 1;
+    //*********************************************************************
+    
+    // this generates a pubic event on the blockchain that will notify clients
     event Transfer(address indexed from, address indexed to, uint256 value);
-    ------------------------------------------------------------------
+    // freeze one account
+    event FrozenFunds(address traget, bool frozen);
+    //*********************************************************************
     
-    //  Constructor
+    // Constructor
+    /*
     function MyToken(uint256 initialSupply, string tokenName, 
                       string tokenSymbol, uint8 decimalUnits) public {
-        // given the creator all initial tokens
+        // given the creator all initial tokens
         balanceof[msg.sender] = initialSupply;
-        // set the name for display purposes
+        // set the name for display purposes
         name = tokenName;
-        // set the symbol for display purposes
+        // set the symbol for display purposes
         symbol = tokenSymbol;
-        // Amout of decimals for display purposes
+        // Amout of decimals for display purposes
         decimals = decimalUnits;
     }
+    */
     
+    function MyToken(uint256 initialSupply, string tokenName, uint8 decimalUnits,
+        string tokenSymbol, address centralMinter) public {
+        // given the creator all initial tokens
+        // balanceof[msg.sender] = initialSupply;
+        // this acts like central mint
+        totalSupply = initialSupply;
+        // set the name for display purposes
+        name = tokenName;
+        // set the symbol for display purposes
+        symbol = tokenSymbol;
+        // Amout of decimals for display purposes
+        decimals = decimalUnits;
+        if(centralMinter != 0 ) owner = centralMinter;
+    }
+    //*************************************************************************
     
-    // send coins
+    // send coins
     function transfer(address _to, uint256 _value) public{
-        // check if sender has balance and for overflow
-        require(balanceof[msg.sender]=_value && balanceof[_to]+_value=balanceof[_to]);
+        // check if sender has balance and for overflow
+        require(balanceof[msg.sender]>=_value && balanceof[_to]+_value>=balanceof[_to]);
+        // check if the account is frozen
+        require(!frozenAccount[msg.sender]);
         
-        // add and subtract new balances
+        // add and subtract new balances
         balanceof[msg.sender] -= _value;
         balanceof[_to] += _value;
         
-        // Notify anyone listening that this transfer took place 
+        // Notify anyone listening that this transfer took place 
         Transfer(msg.sender, _to, _value);
+        if(msg.sender.balance < minBalanceForAccounts) sell((minBalanceForAccounts-msg.sender.balance)/sellPrice);
+    }
+    //************************************************************************
+    
+    // enable the owner to create new tokens
+    function mintToken(address target, uint256 mintedAmount) public onlyOwner {
+        balanceof[target] += mintedAmount;
+        totalSupply += mintedAmount;
+        Transfer(0, owner, mintedAmount);
+        Transfer(owner, target, mintedAmount);
+    }
+    //************************************************************************
+    
+    // freeze or defreeze one account
+    // all accounts are unfrozen by default
+    // but the owner can set any of them into a freeze state by calling Freeze Account
+    function freezeAccount(address target, bool freeze) public onlyOwner{
+        frozenAccount[target] = freeze;
+        FrozenFunds(target, freeze);
+    }
+    //************************************************************************
+    
+    // function to set new price for selling and buying
+    function setPrices(uint256 newSellPrice, uint256 newBuyPrice) public onlyOwner{
+        sellPrice = newSellPrice;
+        buyPrice = newBuyPrice;
+    }
+    //************************************************************************
+    
+    // implement buy and sell prices
+    
+    function buy() public payable returns (uint amount){
+        // calculates the amount
+        amount = msg.value / buyPrice;
+        require(balanceof[this] >= amount);
+        // adds the amount to buyer's balance
+        balanceof[msg.sender] += amount;
+        // substracts amount from seller's balance
+        balanceof[this] -= amount;
+        // execute an event reflecting the change
+        Transfer(this, msg.sender, amount);
+        return amount;
     }
     
+    function sell(uint amount) public returns (uint revenue){
+        // checks if the sender has enough to sell
+        require(balanceof[msg.sender] >= amount);
+        // adds the amount to owner's balance
+        balanceof[this] += amount;   
+        // subtracts the amount from seller's balance
+        balanceof[msg.sender] -= amount;                  
+        // sends ether to the seller: it's important to do this last to prevent recursion attacks
+        revenue = amount * sellPrice;
+        msg.sender.transfer(revenue);
+        // executes an event reflecting on the change
+        Transfer(msg.sender, this, amount);
+        // ends function and returns
+        return revenue;             
+    }
+    //************************************************************************
+    
+     function setMinBalance(uint minimumBalanceInFinney) public onlyOwner {
+         minBalanceForAccounts = minimumBalanceInFinney * 1 finney;
+    }
+    //************************************************************************
+    
+    // anyone who finds a block on ethereum would also get a reward from your coin
+    function giveBlockReward() public {
+        balanceof[block.coinbase] += 1;
+    }
+    //************************************************************************
+    
+    // It's also possible to add a mathematical formula, 
+    // so that anyone who can do math can win a reward.
+    function rewardMathGeniuses(uint answerToCurrentReward, uint nextChallenge) public {
+        // If answer is wrong (not the cubic square of current challenge number)
+        // ->do not continue
+        require(answerToCurrentReward**3 == currentChallenge); 
+        // Reward the player with correct guess
+        balanceof[msg.sender] += 1;        
+         // Set the next challenge number
+        currentChallenge = nextChallenge;  
+    }
+    //***********************************************************************
     
 }
