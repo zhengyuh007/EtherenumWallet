@@ -1,0 +1,5 @@
+// gas information
+https://ethgasstation.info/
+
+// introduction to Solidity Language
+https://solidity.readthedocs.io/en/latest/units-and-global-variables.html#block-and-transaction-properties
