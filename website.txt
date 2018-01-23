@@ -9,3 +9,6 @@ https://solidity.readthedocs.io/en/latest/units-and-global-variables.html#block-
 
 // 2GB add
 0x1EedA947e871dCA5DfBCA1B6600bfebFf9E5072D
+
+// IDEA_Receiver
+0x3514799352eD5E7C8F314fF9Ce72e9D8Bab224d6
