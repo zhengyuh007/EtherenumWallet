@@ -15,3 +15,6 @@ https://solidity.readthedocs.io/en/latest/units-and-global-variables.html#block-
 
 // IDEA_Receiver
 0x3514799352eD5E7C8F314fF9Ce72e9D8Bab224d6
+
+// IDEA WALEET
+0x2236843a26713e23D7367eFc9eBD545ef74472Dd
