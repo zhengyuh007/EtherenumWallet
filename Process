@@ -31,6 +31,10 @@ In order Traversal + Reverse In order Traversal + Stack
 */
 
 Coin Path
+/*
+Method1: bottom-up DP(DanXulie -> f[i] = result in i~n-1) + Track Path (next array)
+Method2: DFS with Memorization + Track Path
+*/
 
 // 2018/2/24
 //**********************************************************************************************************************
