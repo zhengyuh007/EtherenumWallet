@@ -32,7 +32,11 @@ In order Traversal + Reverse In order Traversal + Stack
 
 Coin Path
 /*
-Method1: bottom-up DP(DanXulie -> f[i] = result in i~n-1) + Track Path (next array)
+Method1: bottom-up DP(DanXulie) + Track Path 
+f[i] = min cost from i to n-1(end)
+next[i] = in minimal-cost and lexicographically smallest  path
+          next one position(where to go one next) after i
+
 Method2: DFS with Memorization + Track Path
 */
 
