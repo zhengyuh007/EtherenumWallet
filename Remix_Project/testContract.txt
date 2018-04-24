@@ -1,0 +1,25 @@
+pragma solidity ^0.4.16;
+contract testContract {
+    // use event to debug
+    event test_value(uint256 value);
+
+    uint value;
+    
+    function testContract(uint _p) public {
+        value = _p;
+    }
+    
+    // payable:  it is possible to send value (Ether) to the contract
+    function setP(uint _n) public payable {
+        value = _n;
+        test_value(value);
+    }
+
+    function setNP(uint _n) public {
+        value = _n;
+    }
+
+    function get () public constant returns (uint) {
+        return value;
+    }
+}
