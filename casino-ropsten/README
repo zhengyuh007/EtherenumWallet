@@ -1,12 +1,10 @@
-# Implement one Casino in Ropsten Blockchain (test ethereum blockchain) </br>
-Note that there is one hidden file called .babelrc (you will get one this file when using truffle or react.js) </br>
-the content is below </br>
-</br>
-{ </br>
-    "presets": ["env", "react"] </br>
-  } </br>
-</br>
-
+# Implement one Casino in Ropsten Blockchain (test ethereum blockchain) 
+Note that there is one hidden file called .babelrc (you will get one this file when using truffle or react.js)
+the content is below 
+{ 
+    "presets": ["env", "react"] 
+  }
+  
 And you will need one node_modules that was initialized by truffle or node.js </br>
 
 The codes in windows powershell(or cmd) is below. </br>
@@ -39,3 +37,11 @@ ipfs name publish [your hash]
 # this will show published to [web address]: ...
 # In chrome brower, navigate to following address and see the final dapp
 gateway.ipfs.io/ipns/[web address]
+//***************************************************************************************************
+Tutorial for this:
+https://medium.com/@merunasgrincalaitis/the-ultimate-end-to-end-tutorial-to-create-and-deploy-a-fully-descentralized-dapp-in-ethereum-18f0cf6d7e0e
+https://www.valentinog.com/blog/webpack-4-tutorial/
+
+My final Dapp URL is below:
+https://gateway.ipfs.io/ipns/QmSN3DpHfTiHQsFdUsUpGB7vupKMkCrHAQBELjVgS3LzZR/
+(Note that u need to use chrome broweser with metamask connected with ropsten network to access)
