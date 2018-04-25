@@ -1,1 +1,41 @@
-# Implement one Casino in Ropsten Blockchain (test ethereum blockchain)
+# Implement one Casino in Ropsten Blockchain (test ethereum blockchain) </br>
+Note that there is one hidden file called .babelrc (you will get one this file when using truffle or react.js) </br>
+the content is below </br>
+</br>
+{ </br>
+    "presets": ["env", "react"] </br>
+  } </br>
+</br>
+
+And you will need one node_modules that was initialized by truffle or node.js </br>
+
+The codes in windows powershell(or cmd) is below. </br>
+
+#Important commands in PowerShell or CMD
+
+## Powershell:
+# In casino file (make sure truffle is installed)
+npm init -y
+truffle init
+npm i -D webpack react react-dom babel-core babel-loader babel-preset-react babel-preset-env css-loader style-loader json-loader web3@0.20.0
+npm i -g http-server
+code .
+# Code solidity (write casino.sol)
+# Publish in Ropsten(make sure metamask connect to ropsten), record ABI and address
+# Then create file webpack.config.js (source code in config file)
+# Create frontend folder(src) and write App.js, index.html, index.js, index.css
+# modify package.json (add build: ".." in scripts section)
+# and install some plugins (see in webpack-4-tutorial) in PowerShell (some simple commands)
+npm run build (this will generate build.js, index.html, main.css in dist folder -> our final frontend files)
+
+# download ipfs and install, add its folder into PATH environment variable
+## CMD
+ipfs daemon # this will require some easy commands first, just type it and it will remind u to code
+## open another CMD, cd into your project folder
+ipfs swarm peers
+ipfs add -r dist/
+# copy last hash number (the hash for dist)
+ipfs name publish [your hash]
+# this will show published to [web address]: ...
+# In chrome brower, navigate to following address and see the final dapp
+gateway.ipfs.io/ipns/[web address]
