@@ -1,0 +1,264 @@
+pragma solidity ^0.4.18;
+/**
+ * This smart contract code is Copyright 2018 Idea Campus
+ * Copyright : Zhengyu He
+ * This version can contain trigger inside contract
+ * user send Ether to contract, the payble function will be fallback
+ * then send back Token to user according to buyPrice the owner set
+ */
+ 
+/**
+ check for transaction safety (integer overflow prevent)
+ */
+library SafeMath {
+  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+    if (a == 0) {
+      return 0;
+    }
+    uint256 c = a * b;
+    assert(c / a == b);
+    return c;
+  }
+
+  function div(uint256 a, uint256 b) internal pure returns (uint256) {
+    // assert(b > 0); // Solidity automatically revert()s when dividing by 0
+    uint256 c = a / b;
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+    return c;
+  }
+
+  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+    assert(b <= a);
+    return a - b;
+  }
+
+
+  function add(uint256 a, uint256 b) internal pure returns (uint256) {
+    uint256 c = a + b;
+    assert(c >= a);
+    return c;
+  }
+}
+
+
+/*
+ * Digital Token
+ *
+ * Abstract contract that create Digital Token based on ERC20.
+ *
+ */
+contract AAAToken {
+    using SafeMath for uint256;
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
+    address public owner;
+    // buy price
+    uint256 public buyPrice;
+
+    /* This creates an array with all balances */
+    mapping (address => uint256) public balanceOf;
+    mapping (address => uint256) public freezeOf;
+    mapping (address => mapping (address => uint256)) public allowance;
+
+    /* This generates a public event on the blockchain that will notify clients */
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    /* This notifies clients about the amount burnt */
+    event Burn(address indexed from, uint256 value);
+    
+
+    /* This notifies clients about the amount frozen */
+    event Freeze(address indexed from, uint256 value);
+
+    /* This notifies clients about the amount unfrozen */
+    event Unfreeze(address indexed from, uint256 value);
+
+    /* This notifies the owner transfer */
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /* Initializes contract with initial supply tokens to the creator of the contract */
+    function AAAToken( uint256 initialSupply, uint8 decimalUnits) public {
+        balanceOf[msg.sender] = initialSupply*(10**(uint256)(decimalUnits)); // Give the creator all initial tokens
+        totalSupply = initialSupply*(10**(uint256)(decimalUnits)); // Update total supply
+        name = "AAAToken";   // Set the name for display purposes
+        symbol = "AAA";    // Set the symbol for display purposes
+        decimals = decimalUnits;  // Amount of decimals for display purposes
+        owner = msg.sender;
+        buyPrice = 0;
+    }
+    //****************************************************************************
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+      require(msg.sender == owner);
+      _;
+    }
+    //****************************************************************************
+
+    /**
+     * @dev Allows the current owner to transfer control of the contract to a newOwner.
+     * @param newOwner The address to transfer ownership to.
+     */
+    function transferOwnership(address newOwner) public onlyOwner {
+      require(newOwner != address(0));
+      OwnershipTransferred(owner, newOwner);
+      owner = newOwner;
+    }
+
+    /* Send Coins */
+    function transfer(address _to, uint256 _value) public {
+        require(_to != 0x0);
+        require(_value > 0);
+         // _value = _value*(10**uint256(decimals));
+        require(balanceOf[msg.sender] >= _value );// Check if the sender has enough
+        require(balanceOf[_to] + _value >= balanceOf[_to]); // Check for overflows
+
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value); // Subtract from the sender
+        balanceOf[_to] = balanceOf[_to].add(_value);  // Add the same to the recipient
+        Transfer(msg.sender, _to, _value);   // Notify anyone listening that this transfer took place
+    }
+    //*************************************************************************************
+    
+    /*
+    Usage of approve and transferFrom 
+    A wants to use approve and call to transfer 50 MTK to B
+    1. A calls approve(B,50) -> A is msg.sender
+       Internally, allwance[A][B] = 50
+    2. B calls transferFrom(A, B, 50) to receive 50 MTK
+       Internally, allwance[A][B] -= 50 -> 0
+       balanceOf[A] -=50, balanceOf[B] += 50
+    */
+    /* Allow another contract to spend some tokens in your behalf */
+    function approve(address _spender, uint256 _value) public returns (bool) {
+        require(_value > 0);
+        allowance[msg.sender][_spender] = _value;
+        return true;
+    }
+
+    /* A contract attempts to get the coins */
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+        require(_to != 0x0);
+        require(_value > 0);
+        require(balanceOf[_from] >= _value );// Check if the sender has enough
+        require(balanceOf[_to] + _value >= balanceOf[_to]); // Check for overflows
+        require(_value <= allowance[_from][msg.sender]); // Check allowance
+
+        balanceOf[_from] = balanceOf[_from].sub(_value);   // Subtract from the sender
+        balanceOf[_to] = balanceOf[_to].add(_value);  // Add the same to the recipient
+        allowance[_from][msg.sender] = allowance[_from][msg.sender].sub(_value);
+        Transfer(_from, _to, _value);
+        return true;
+    }
+    //**********************************************************************************
+
+    function burn(uint256 _value) public onlyOwner returns (bool) {
+        require(balanceOf[msg.sender] >= _value);// Check if the sender has enough
+        require(_value > 0);
+
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value);  // Subtract from the sender
+        totalSupply = totalSupply.sub(_value); // Updates totalSupply
+        Burn(msg.sender, _value);
+        return true;
+    }
+
+    function freeze(uint256 _value) public returns (bool) {
+        require(balanceOf[msg.sender] >= _value);// Check if the sender has enough
+        require(_value > 0);
+
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value); // Subtract from the sender
+        freezeOf[msg.sender] = freezeOf[msg.sender].add(_value);  // Updates totalSupply
+        Freeze(msg.sender, _value);
+        return true;
+    }
+
+    function unfreeze(uint256 _value) public returns (bool) {
+        require(freezeOf[msg.sender] >= _value); // Check if the sender has enough
+        require(_value > 0);
+
+        freezeOf[msg.sender] = freezeOf[msg.sender].sub(_value); // Subtract from the sender
+        balanceOf[msg.sender] = balanceOf[msg.sender].add(_value);
+        Unfreeze(msg.sender, _value);
+        return true;
+    }
+    //****************************************************************************
+    
+    // Add tokens to currency
+    // @notice Create `mintedAmount` tokens and send it to `target`
+    // @param target Address to receive the tokens
+    // @param mintedAmount the amount of tokens it will receive
+    function mintToken(address target, uint256 mintedAmount) onlyOwner public {
+        balanceOf[target] += mintedAmount;
+        totalSupply += mintedAmount;
+        Transfer(0, this, mintedAmount);
+        Transfer(this, target, mintedAmount);
+    }
+    //*************************************************************************
+    
+    // to realize user buy tokens
+    function _transfer(address _from, address _to, uint256 _value) internal {
+        require(_to != 0x0);
+        require(balanceOf[_from] >= _value);
+        require(balanceOf[_to] + _value  > balanceOf[_to]);
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        Transfer(_from, _to, _value);
+    }
+    
+    /*
+    function buy() payable public {
+        require(buyPrice > 0);
+        // note that msg.value is in uint wei = 1e-18 ether
+        uint256 amount = msg.value / buyPrice;
+        _transfer(this, msg.sender, amount);
+    }
+    */
+    
+    function setPrice(uint256 newBuyPrice) onlyOwner public {
+        buyPrice = newBuyPrice;
+    }
+    //************************************************************************
+    
+    function transferToContract(uint256 amount) onlyOwner public {
+        _transfer(msg.sender, this, amount);
+    }
+    
+    function transferToContractByOneUint(uint256 amount) onlyOwner public {
+        _transfer(msg.sender, this, amount*(10**(uint256)(decimals)));
+    }
+    //*************************************************************************
+    
+    function withdrawFromContract(uint256 amount) onlyOwner public {
+        _transfer(this, msg.sender, amount);
+    }
+    
+    function withdrawFromContractByOneUint(uint256 amount) onlyOwner public {
+        _transfer(this, msg.sender, amount*(10**(uint256)(decimals)));
+    }
+    
+    //*************************************************************************
+    
+    // transfer contract balance to owner -> unit: ether
+    function withdrawEther(uint256 amount) public onlyOwner {
+        owner.transfer(amount * 1 ether);
+    }
+    
+    // transfer contract balance to owner -> uint: wei
+    function withdrawEtherInWei(uint256 amount) public onlyOwner {
+        owner.transfer(amount);
+    }
+    
+    // can accept ether
+    function() payable public {
+        require(buyPrice > 0);
+        // note that msg.value is in uint wei = 1e-18 ether
+        uint256 amount = msg.value * buyPrice;
+        _transfer(this, msg.sender, amount);
+    }
+    
+    //*************************************************************************
+    
+}
