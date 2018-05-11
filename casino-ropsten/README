@@ -6,16 +6,16 @@ the content is below
     "presets": ["env", "react"] 
   }
   
-And you will need one node_modules that was initialized by node.js </br>
+And you will need one node_modules that was initialized by node.js 
 
-The codes in windows powershell(or cmd) is below. </br>
+The codes in windows powershell(or cmd) is below. 
 
 #Important commands in PowerShell or CMD
 
 ## Powershell:
 # In casino file (make sure truffle is installed)
 truffle init
-npm init -y
+npm init -y    # This will create and initialize package.json
 npm i -D webpack react react-dom babel-core babel-loader babel-preset-react babel-preset-env css-loader style-loader json-loader web3@0.20.0
 npm i -g http-server
 code .
