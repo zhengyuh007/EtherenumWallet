@@ -1,6 +1,6 @@
 # Implement one Casino in Ropsten Blockchain (test ethereum blockchain) 
 
-Note that there is one hidden file called .babelrc (you will get one this file when using truffle or react.js)
+Note that there is one hidden file called .babelrc (you will get one this file when using truffle or react.js, If not, just add this file (I use VSC IDE))
 the content is below 
 { 
     "presets": ["env", "react"] 
