@@ -14,6 +14,8 @@ use a pattern where the recipient withdraws the money.
 
 //***************************************************************************************
 
+storage vs memory
+
 https://cryptozombies.io/zh/lesson/2/chapter/7
 storage -> permanent in blockchain, memory -> temporary
 Storage 变量是指永久存储在区块链中的变量。 Memory 变量则是临时的，当外部函数对某合约调用完成时，内存型变量即被移除。 
@@ -21,6 +23,14 @@ Storage 变量是指永久存储在区块链中的变量。 Memory 变量则是�
 
 大多数时候你都用不到这些关键字，默认情况下 Solidity 会自动处理它们。 
 状态变量（在函数之外声明的变量）默认为“存储”形式，并永久写入区块链；而在函数内部声明的变量是“内存”型的，它们函数调用结束后消失。
+
+//***************************************************************************************
+
+public, internal, external, private -> Four types for a function or variable of scope
+
+internal -> like protected in Java (all contract inheritance from this can use)
+external -> only can be called outside this contract (public can also be called inside this contract)
+
 //***************************************************************************************
 
 
