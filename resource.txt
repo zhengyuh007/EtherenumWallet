@@ -1,0 +1,65 @@
+https://www.leiphone.com/news/201707/w7pSQ3QwDtJMuEbr.html
+--比特币，以太坊，区块链，代币，ICO，你需要的一切都在这里了
+
+http://blog.51cto.com/zero01/2066321
+--区块链技术的基础
+
+https://solidity.readthedocs.io/en/latest/
+--Solidity Document
+//------------------------------------------------------------------------------------------
+
+https://medium.com/programmers-blockchain/create-simple-blockchain-java-tutorial-from-scratch-6eeed3cb03fa
+--Creating Your First Blockchain with Java. Part 1.
+https://github.com/CryptoKass/NoobChain-Tutorial-Part-2/tree/master/src/noobchain
+-- Part 2 Source Code
+//------------------------------------------------------------------------------------------
+
+http://blog.51cto.com/zero01/2086195?wx=
+Java Blockchain
+
+https://www.cnblogs.com/saratearing/p/5811866.html
+Tomcat9安装教程
+
+https://blog.csdn.net/gdjlc/article/details/73321737
+如何在一台机器上安装多个tomcat服务器（端口）
+
+https://blog.csdn.net/w410589502/article/details/70847173
+eclipse配置多个tomcat端口
+//--------------------------------------------------------------------------------------------
+
+http://truffleframework.com/tutorials/how-to-install-truffle-and-testrpc-on-windows-for-blockchain-development
+windows truffle安装教程
+
+https://ethfans.org/posts/101-noob-intro
+以太坊智能合约编程之菜鸟教程
+
+http://truffleframework.com/docs/
+truffle官方教程
+
+https://ethfans.org/posts/661
+教程 | 你的第一个Truffle分布式app (3) —— Truffle架构入门指南初探
+
+https://medium.com/@mvmurthy/full-stack-hello-world-voting-ethereum-dapp-tutorial-part-1-40d2d0d807c2
+Full Stack Hello World Voting Ethereum Dapp Tutorial — Part 1
+
+https://medium.com/@mvmurthy/full-stack-hello-world-voting-ethereum-dapp-tutorial-part-2-30b3d335aa1f
+Full Stack Hello World Voting Ethereum Dapp Tutorial — Part 2
+
+http://truffle.tryblockchain.org/14838695696327.html
+Truffle - 以太坊Solidity编程语言开发框架
+
+https://medium.com/@merunasgrincalaitis/the-ultimate-end-to-end-tutorial-to-create-and-deploy-a-fully-descentralized-dapp-in-ethereum-18f0cf6d7e0e
+Gamble Dapp
+https://www.valentinog.com/blog/webpack-4-tutorial/
+webpack 4 tutorial
+
+//--------------------------------------------------------------------------------------------
+
+https://ethfiddle.com/
+solidity测试平台
+//--------------------------------------------------------------------------------------------
+
+https://cryptozombies.io/zh
+cryptozobies game教程（sign in 用usc邮箱）
+
+
