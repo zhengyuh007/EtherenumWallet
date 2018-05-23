@@ -55,5 +55,16 @@ function fiveMinutesHavePassed() public view returns (bool) {
 
 //***************************************************************************************
 
+In solidity every variable is set to 0 by default.
+You should think of mappings as all possible combinations are set to 0 by default.
 
+struct buyer{
+       uint amount;
+       Status status;
+       }
+mapping(address=>buyer) public buyers;
 
+If u want to determine one address exist in buyers or not, u can use the following statment
+if (buyers[msg.sender].amount == 0)
+
+//***************************************************************************************
